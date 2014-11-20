@@ -5,14 +5,10 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
 
 public class GameScreen implements Screen {
 
@@ -22,29 +18,37 @@ public class GameScreen implements Screen {
 	private SpriteBatch batch;
 	private Array<Spider> spiders;
 	private int noOfSpiders, score;
-	private boolean alive;
 	private Spider finalspider;
+	private Menu menu;
+
 	
 	
 	public GameScreen () {
-		shape=new ShapeRenderer();
-		alive = true;
-		noOfSpiders=0;
-		
+		shape = new ShapeRenderer();
 		Constants.cam=new OrthographicCamera();
+		spiders = new Array<Spider>();
+		fly = new Fly();
+		batch = new SpriteBatch();
+		menu = new Menu(batch);
+		
+		menu.initializeMainMenuButtons();
+		menu.show();
+	
+		reset();
+	}
+	
+	public void reset () {
+		noOfSpiders=0;
+		spiders.clear();
+		initArray();
+		
 		Constants.cam.viewportWidth=Gdx.graphics.getWidth();
 		Constants.cam.viewportHeight=Gdx.graphics.getHeight();
 		Constants.cam.position.set(Constants.cam.viewportWidth/2,Constants.cam.viewportHeight/2,0);
-		
-		initArray();
-		fly = new Fly();
-		batch = new SpriteBatch();
 	}
 	
 	private void initArray () {
 		Spider spid;
-		
-		spiders = new Array<Spider>();
 		
 		for (int i=0; i<6; i++) {
 			spid=new Spider();
@@ -62,35 +66,46 @@ public class GameScreen implements Screen {
 		
 		batch.setProjectionMatrix(Constants.cam.combined);
 		
-		handleSpiders();
+		batch.begin();
+		batch.draw(Constants.BACKGROUND,Constants.cam.position.x - Constants.cam.viewportWidth/2, Constants.cam.position.y - Constants.cam.viewportHeight/2, 480 * Constants.WIDTH_RATIO, 800 * Constants.HEIGHT_RATIO);
+		batch.end();
+		
+		//System.out.println(alive);
+		
+		if (!fly.isAlive()) {
+			if (finalspider.getLeftSpiderRect().width < - fly.getFlyRectangle().width) {
+				if (!menu.getMenushwon()) {
+					menu.show();
+					menu.setMenushown(true);
+				}
+				reset();
+			}
+			else handleSpiders();
+		}
+		else handleSpiders();
 		
 		batch.begin();
 		
-		if (alive){
-			fly.draw(batch);
-			fly.update(delta);
-			
+		if (fly.isAlive() ){
+			if(!menu.isShown()){
+				fly.draw(batch);
+				fly.update(delta);
+			}
 		}
-		else finishGame();
+		else fly.split(finalspider.getLeftSpiderRect(), finalspider.getRightSpiderRect(), batch);
 		
 		batch.end();
 		
+		menu.drawButtons();
+		
 		Constants.cam.update();
-		
-	}
-	
-	private void finishGame () {
-		fly.split(finalspider.getLeftSpiderRect(), finalspider.getRightSpiderRect(), batch);
-		
-		
-		
-			
 		
 	}
 	
 	private void handleSpiders(){
 		shape.setProjectionMatrix(Constants.cam.combined);
 		shape.begin(ShapeType.Filled);
+		
 		shape.setColor(Color.RED);
 		
 		for (Spider sp : spiders){
@@ -102,7 +117,7 @@ public class GameScreen implements Screen {
 			shape.rect(sp.getLeftSpiderRect().x,sp.getLeftSpiderRect().y,sp.getLeftSpiderRect().width,sp.getLeftSpiderRect().height);
 			shape.rect(sp.getRightSpiderRect().x,sp.getRightSpiderRect().y,sp.getRightSpiderRect().width,sp.getRightSpiderRect().height);
 			
-			if (alive){
+			if (fly.isAlive()){
 				if (sp.getDelay()==true){
 					if (sp.getLeftSpiderRect().y < Constants.cam.position.y + 400 * Constants.HEIGHT_RATIO){
 						sp.Delay();
@@ -126,19 +141,20 @@ public class GameScreen implements Screen {
 				sp.moveOut();
 			
 		}
-		
-		
-		
-		System.out.println(score);
-		
+		//System.out.println(score);
 		shape.end();
 	}
 	
 	private void collision (Spider sp) {
 		if (fly.getFlyRectangle().overlaps(sp.getLeftSpiderRect())) {
-			alive = false;
+			fly.die();
+			menu.initializeRetryButtons();
 			finalspider=sp;
 		}
+	}
+	
+	public Fly getFly () {
+		return fly;
 	}
 	
 
@@ -177,5 +193,6 @@ public class GameScreen implements Screen {
 		// TODO Auto-generated method stub
 		
 	}
+	
 
 }

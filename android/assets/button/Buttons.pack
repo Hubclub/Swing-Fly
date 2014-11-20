@@ -1,0 +1,110 @@
+
+Buttons.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+128X32
+  rotate: false
+  xy: 1, 88
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+128X32pressed
+  rotate: false
+  xy: 1, 54
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+slider
+  rotate: false
+  xy: 1, 35
+  size: 128, 17
+  orig: 128, 17
+  offset: 0, 0
+  index: -1
+64X32
+  rotate: false
+  xy: 131, 88
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+64X32pressed
+  rotate: false
+  xy: 1, 1
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+GGbackground
+  rotate: false
+  xy: 131, 54
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+help
+  rotate: false
+  xy: 197, 88
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+helppressed
+  rotate: false
+  xy: 67, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+options
+  rotate: false
+  xy: 197, 54
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+optionspressed
+  rotate: false
+  xy: 101, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+back
+  rotate: false
+  xy: 131, 36
+  size: 32, 16
+  orig: 32, 16
+  offset: 0, 0
+  index: -1
+backpressed
+  rotate: false
+  xy: 165, 36
+  size: 32, 16
+  orig: 32, 16
+  offset: 0, 0
+  index: -1
+checkbox
+  rotate: false
+  xy: 231, 104
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+checkboxunchecked
+  rotate: false
+  xy: 199, 36
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+knob
+  rotate: false
+  xy: 231, 88
+  size: 16, 14
+  orig: 16, 14
+  offset: 0, 0
+  index: -1

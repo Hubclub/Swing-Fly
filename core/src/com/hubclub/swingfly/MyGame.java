@@ -4,7 +4,7 @@ import com.badlogic.gdx.Game;
 
 public class MyGame extends Game {
 	
-	GameScreen game;
+	public static GameScreen game;
 	@Override
 	public void create () {
 		game = new GameScreen();

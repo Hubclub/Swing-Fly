@@ -8,11 +8,14 @@ import com.badlogic.gdx.math.Rectangle;
 public class Fly {
 	private Rectangle flyRectangle;
 	private Texture flyTexture;
-	private float ACCELERAtION=.5f;
+	private float acc;
 	private float speed,time;
+	private boolean alive;
 	
 	public Fly () {
-		flyRectangle = new Rectangle(Gdx.graphics.getWidth()/2-Constants.FLY_WIDTH/2, 50*Constants.HEIGHT_RATIO, Constants.FLY_WIDTH, Constants.FLY_HEIGHT);
+		flyRectangle= new Rectangle();
+		alive=true;
+		reset();
 		flyTexture = new Texture("badlogic.jpg");
 	}
 	
@@ -22,15 +25,15 @@ public class Fly {
 	
 	public void update (float delta) {
 		time+=delta;
-		speed -= time*ACCELERAtION;
+		speed -= time*acc;
 		flyRectangle.y += speed;
 		
-		if (Gdx.input.justTouched()) {
+		if (Gdx.input.justTouched() ) {
 			time=0;
-			speed=10;
+			speed=Constants.FLY_SPEED;
 		}
 		
-		if (speed<-9.5f) speed = -9.5f;
+		if (speed<Constants.MAX_SPEED) speed = Constants.MAX_SPEED;
 		
 		moveCam();
 		
@@ -47,12 +50,33 @@ public class Fly {
 	}
 	
 	public void split (Rectangle leftSpider, Rectangle rightSpider, SpriteBatch batch) {
-		flyRectangle.x = leftSpider.width;
+		
+
+			flyRectangle.x = leftSpider.width;
+	
 		batch.draw(flyTexture, leftSpider.width, leftSpider.y - flyRectangle.height / 2, flyRectangle.width, flyRectangle.height);
 		batch.draw(flyTexture, rightSpider.x - flyRectangle.width, leftSpider.y - flyRectangle.height / 2, flyRectangle.width, flyRectangle.height);
 	}
 	
-	
-	
+	public void reset(){
+		speed = 0;
+		time = 0;
+		acc=Constants.GRAVITY_ACCELERATION;
+		flyRectangle.set(Gdx.graphics.getWidth()/2-Constants.FLY_WIDTH/2, 50*Constants.HEIGHT_RATIO, Constants.FLY_WIDTH, Constants.FLY_HEIGHT);
+		
 
+	}
+	
+	public boolean isAlive(){
+		return alive;
+	}
+	
+	public void revive(){
+		alive=true;
+	}
+	
+	public void die(){
+		alive=false;
+	}
+	
 }

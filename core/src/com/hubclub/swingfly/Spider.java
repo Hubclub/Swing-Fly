@@ -36,8 +36,8 @@ public class Spider {
 		}
 
 		float x = MathUtils.random(100 * Constants.WIDTH_RATIO, 240 * Constants.WIDTH_RATIO);
-		leftSpider.set(0,0,x,10);
-		rightSpider.set(Gdx.graphics.getWidth() - x ,0,x,10);
+		leftSpider.set(0,0,x,Constants.WEB_HEIGHT);
+		rightSpider.set(Gdx.graphics.getWidth() - x ,0,x,Constants.WEB_HEIGHT);
 		
 		leftSpider.y = 800*Constants.HEIGHT_RATIO + i * Constants.DISTANCE_PLATFORM;
 		rightSpider.y = 800*Constants.HEIGHT_RATIO + i * Constants.DISTANCE_PLATFORM;
@@ -91,24 +91,24 @@ public class Spider {
 	}
 	
 	private void level1 () {
-		moveSpeed = 2f;
+		moveSpeed = 2f * Constants.WIDTH_RATIO;
 	}
 	
 	private void level2 () {
 		int d=MathUtils.random(1,3);
-		moveSpeed = 4f;
+		moveSpeed = 4f * Constants.WIDTH_RATIO;
 		if (d==1) {
-			moveSpeed = 2f;
+			moveSpeed = 2f * Constants.WIDTH_RATIO;
 		} 
 		
 	}
 	
 	private void level3 () {
 		int d = MathUtils.random(1,6);
-		moveSpeed = 6f;
+		moveSpeed = 6f * Constants.WIDTH_RATIO;
 		if(d==1){
 			moveSpeed=2f;
-		}else if(d<4) moveSpeed = 4f;
+		}else if(d<4) moveSpeed = 4f * Constants.WIDTH_RATIO;
 	}
 	
 	private void level4 () {
@@ -130,9 +130,9 @@ public class Spider {
 	}
 	
 	public boolean moveOut () {
-		leftSpider.width += -moveSpeed;
-		rightSpider.width += -moveSpeed;
-		rightSpider.x+= moveSpeed;
+		leftSpider.width += - 4 * Constants.WIDTH_RATIO;
+		rightSpider.width += - 4 * Constants.WIDTH_RATIO;
+		rightSpider.x+= 4 * Constants.WIDTH_RATIO;
 		
 		return leftSpider.width == 0;
 	}
