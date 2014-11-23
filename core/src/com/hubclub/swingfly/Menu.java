@@ -26,9 +26,10 @@ public class Menu {
 
 	private TextButton button;
 	protected static Skin buttonSkin; //** images are used as skins of the button **//
-	protected static BitmapFont font;
+	private BitmapFont font;
 	
-	public Menu(SpriteBatch batch){
+	public Menu(SpriteBatch batch, BitmapFont font){
+		this.font = font;
 		stage = new Stage(new ScreenViewport(), batch);
 		
 		// load empty buttons
@@ -36,15 +37,11 @@ public class Menu {
 		buttonSkin = new Skin();
 	    buttonSkin.addRegions(buttonsAtlas);
 		
-	//	font = new BitmapFont(Gdx.files.internal("font/LCD_Solid.fnt"));
-	    font = new BitmapFont();
-		font.setScale(2f);
-		font.setColor(Color.BLACK);
+	 //	font = new BitmapFont(Gdx.files.internal("font/LCD_Solid.fnt"));
 		
 		isShown = false;
 		menushown = false;
 		
-		initializeRetryButtons();
 		//Gdx.input.setInputProcessor(stage);
 	}
 	
@@ -76,8 +73,6 @@ public class Menu {
 	         	hide();
 	         	initializeMainMenuButtons();
 	        	//TO DO: set the inputhandler back...
-	        	//MyGame.game.getFly().reset();
-	        	//MyGame.game.getFly().revive();
 	        	resetactions();
 	         }
 		});
@@ -162,6 +157,12 @@ public class Menu {
 	
 	public void setMenushown (boolean menushown) {
 		this.menushown = menushown;
+	}
+	
+	public void dispose(){
+		stage.dispose();
+		buttonsAtlas.dispose();
+		buttonSkin.dispose();
 	}
 	
 }
