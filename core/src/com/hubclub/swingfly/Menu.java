@@ -1,6 +1,8 @@
 package com.hubclub.swingfly;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -17,7 +19,8 @@ import com.badlogic.gdx.utils.Timer.Task;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class Menu {
-	private boolean isShown;
+	private final Sound menuSound;
+	private boolean isShown, start;
 //	private static GameScreen gameScreen;
 	
 	private Stage stage; //** stage holds the Button **//
@@ -30,10 +33,12 @@ public class Menu {
 	
 	public Menu(SpriteBatch batch, BitmapFont font){
 		this.font = font;
+		menuSound = Gdx.audio.newSound(Gdx.files.internal("sound/menutap.mp3"));
+		
 		stage = new Stage(new ScreenViewport(), batch);
 		
 		// load empty buttons
-		buttonsAtlas = new TextureAtlas("button/Buttons.pack");
+		buttonsAtlas = new TextureAtlas("button/button.pack");
 		buttonSkin = new Skin();
 	    buttonSkin.addRegions(buttonsAtlas);
 		
@@ -47,10 +52,13 @@ public class Menu {
 	
 	public void initializeRetryButtons () {
 		stage.clear();
+		MyGame.actionResolver.showAds(true);
+		MyGame.game.checkAchievement(MyGame.game.getScore());
 		
-		addButton("RETRY", "64X32", 40f, 15f, 30f, 10f , new InputListener(){
+		addButton("Retry", "button", 25f, 30f, 45f, 10f , new InputListener(){
 			 public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
 	            System.out.println( "button pressed" );
+	            menuSound.play();
 	            return true;
 	         }
 	         public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
@@ -59,31 +67,40 @@ public class Menu {
 	        	//TO DO: set the inputhandler back...
 	        	MyGame.game.getFly().reset();
 	        	MyGame.game.getFly().revive();
+	        	MyGame.game.resetScore();
 	        	resetactions();
+	        	MyGame.actionResolver.showAds(false);
 	         }
 		});
 		
-		addButton ("Main Menu", "64X32", 40f, 65f, 30f, 10f, new InputListener() {
+		addButton ("Main Menu", "button", 25f, 15f, 45f, 10f, new InputListener() {
 			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
 				System.out.println( "button pressed" );
+				menuSound.play();
 				return true;
 			}
 			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
 	         	System.out.println( "button released" );
 	         	hide();
+	         	MyGame.game.resetScore();
 	         	initializeMainMenuButtons();
 	        	//TO DO: set the inputhandler back...
 	        	resetactions();
 	         }
 		});
+		
+		start = false;
+		
+		
 	}
 	
 	public void initializeMainMenuButtons () {
 		stage.clear();
 		
-		addButton("START", "64X32", 40f, 15f, 30f, 10f, new InputListener() {
+		addButton("Start", "button", 20f, 50f, 55f, 10f, new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				System.out.println("button pressed");
+				menuSound.play();
 				return true;
 			}
 			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
@@ -92,8 +109,55 @@ public class Menu {
 	        	MyGame.game.getFly().reset();
 	        	MyGame.game.getFly().revive();
 				resetactions();
+				MyGame.actionResolver.showAds(false);
 			}
 		});
+
+		
+		addButton("Ranks", "button", 15f, 20f, 30f, 7f, new InputListener() {
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				System.out.println("button pressed");
+				menuSound.play();
+				return true;
+			}
+			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+				System.out.println("button released");
+				
+				if (MyGame.actionResolver.getSignedInGPGS()) {
+					MyGame.actionResolver.getLeaderboardGPGS();
+				} else MyGame.actionResolver.loginGPGS();
+			}
+		});
+		
+		addButton("Succes", "button", 55f, 20f, 30f, 7f, new InputListener() {
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				System.out.println("button pressed");
+				menuSound.play();
+				return true;
+			}
+			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+				System.out.println("button released");
+				
+				if (MyGame.actionResolver.getSignedInGPGS()) {
+					MyGame.actionResolver.getAchievementsGPGS();
+				} else MyGame.actionResolver.loginGPGS();
+			}
+		});
+		
+		addButton("Rate", "button", 30f, 35f, 40f, 7f, new InputListener() {
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				System.out.println("button pressed");
+				menuSound.play();
+				return true;
+			}
+			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+				System.out.println("button released");
+				
+				MyGame.actionResolver.openAppGPS();
+			}
+		});
+		
+		start = true;
 	}
 	
 	public void drawButtons (){
@@ -111,7 +175,7 @@ public class Menu {
 		style.font = font;
 		style.pressedOffsetX = 1;
 		style.pressedOffsetY = -1;
-		style.fontColor = Color.BLACK;
+		style.fontColor = Color.WHITE;
 		
 		button = new TextButton(name, style);
 		button.setPosition(x/100 * Gdx.graphics.getWidth() , y/100 * Gdx.graphics.getHeight() ); //** Button location **//
@@ -163,6 +227,11 @@ public class Menu {
 		stage.dispose();
 		buttonsAtlas.dispose();
 		buttonSkin.dispose();
+		menuSound.dispose();
+	}
+	
+	public boolean isStart(){
+		return start;
 	}
 	
 }

@@ -1,6 +1,8 @@
 package com.hubclub.swingfly;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -17,24 +19,30 @@ public class Fly {
 	private float speed,time,animTime;
 	private boolean alive,tap;
 	private Animation anim;
-	private Texture tapTexture;
+	private Texture tapTexture, rightbody, leftbody, bloodmark;
+	private Sound flySound, flyDeath;
 	
 	public Fly () {
 		animTime=0;
 		flyRectangle= new Rectangle();
 		tapTexture = new Texture ("tapTexture.png");
+		rightbody = new Texture ("rightbodyfly.png");
+		leftbody = new Texture ("leftbodyfly.png");
+		bloodmark = new Texture ("bloodmark.png");
+		flySound = Gdx.audio.newSound(Gdx.files.internal("sound/flysound.mp3"));
+		flyDeath = Gdx.audio.newSound(Gdx.files.internal("sound/flydeath.mp3"));
 		revive();
 		reset();
 		flies=new Texture("flytextures.png");
-		flyTextures = TextureRegion.split(flies, flies.getWidth()/2,flies.getHeight() );
-		anim=new Animation(0.001f,flyTextures[0]);
+		flyTextures = TextureRegion.split(flies, flies.getWidth()/6,flies.getHeight() );
+		anim=new Animation(0.0005f,flyTextures[0]);
 		anim.setPlayMode(PlayMode.LOOP);
 	}
 	
 	public void draw(SpriteBatch batch) {
 		if(!tap){
-			batch.draw(tapTexture,Gdx.graphics.getWidth()/2-Constants.FLY_WIDTH, 200*Constants.HEIGHT_RATIO, 2*Constants.FLY_WIDTH, 2*Constants.FLY_HEIGHT );
-			MyGame.game.getFont().draw(batch, "TAP TO FLY", Gdx.graphics.getWidth()/2 - Constants.FLY_WIDTH - 10 * Constants.WIDTH_RATIO, 400 * Constants.HEIGHT_RATIO);
+			batch.draw(tapTexture,Gdx.graphics.getWidth()/2-Constants.FLY_WIDTH - Constants.COZMA/2, 200*Constants.HEIGHT_RATIO, 2*Constants.FLY_WIDTH, 2*Constants.FLY_HEIGHT );
+			MyGame.game.getFont().draw(batch, "TAP TO FLY", Gdx.graphics.getWidth()/2 - Constants.FLY_WIDTH - Constants.COZMA , 380 * Constants.HEIGHT_RATIO);
 			batch.draw(flyTextures[0][1],Constants.FLY_START.x,Constants.FLY_START.y,Constants.FLY_WIDTH,Constants.FLY_HEIGHT);
 			
 		}else{
@@ -55,7 +63,8 @@ public class Fly {
 		
 		animTime+=delta;
 		
-		if (Gdx.input.justTouched() ) {
+		if (Gdx.input.justTouched() ||  Gdx.input.isKeyPressed(Keys.SPACE)) {
+			flySound.play();
 			time=0;
 			speed=Constants.FLY_SPEED;
 			tap=true;
@@ -81,9 +90,11 @@ public class Fly {
 		
 
 		flyRectangle.x = leftSpider.width;
-	
-		batch.draw(flyTextures[0][1], leftSpider.width, leftSpider.y - flyRectangle.height / 2, flyRectangle.width, flyRectangle.height);
-		batch.draw(flyTextures[0][1], rightSpider.x - flyRectangle.width, leftSpider.y - flyRectangle.height / 2, flyRectangle.width, flyRectangle.height);
+		
+		//batch.draw(bloodmark, leftSpider.width , leftSpider.y - flyRectangle.height/2, rightSpider.x - leftSpider.width, flyRectangle.height);
+		batch.draw(bloodmark, 240 * Constants.WIDTH_RATIO - flyRectangle.width/2, leftSpider.y - flyRectangle.height/2, flyRectangle.width, flyRectangle.height);
+		batch.draw(leftbody, leftSpider.width - flyRectangle.width + 10 * Constants.WIDTH_RATIO, leftSpider.y - flyRectangle.height / 2, flyRectangle.width, flyRectangle.height);
+		batch.draw(rightbody, rightSpider.x, leftSpider.y - flyRectangle.height / 2, flyRectangle.width, flyRectangle.height);
 		
 	}
 	
@@ -108,12 +119,15 @@ public class Fly {
 	}
 	
 	public void die(){
+		flyDeath.play();
 		alive=false;
 	}
 	
 	public void dispose () {
 		tapTexture.dispose();
 		flies.dispose();
+		flySound.dispose();
+		flyDeath.dispose();
 	}
 	
 }

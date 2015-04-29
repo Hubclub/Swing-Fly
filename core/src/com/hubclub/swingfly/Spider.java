@@ -34,6 +34,7 @@ public class Spider {
 		animRight.setPlayMode(PlayMode.LOOP);
 	}
 	
+	
 	public void set(int score,int i){
 		this.score = score;
 		isExpanding = 1;
@@ -43,6 +44,7 @@ public class Spider {
 		if (score<=3) level = 1;
 		else if (score >3 && score <=7) level = 2;
 		else if (score>7 && score <=10) level = 3;
+		else level = 4;
 		
 		switch (level) {
 		case 1 : level1(); break;
@@ -62,17 +64,33 @@ public class Spider {
 		leftSpider.set(x - Constants.SPIDER_WIDTH,leftWeb.y - Constants.SPIDER_HEIGHT/2, Constants.SPIDER_WIDTH, Constants.SPIDER_HEIGHT);
 		rightSpider.set(x ,leftWeb.y - Constants.SPIDER_HEIGHT/2, Constants.SPIDER_WIDTH, Constants.SPIDER_HEIGHT);
 		
-		if (MathUtils.random(1, 5) == 1 ) {
-			hasDelay = true;
-			
-			leftWeb.width=240*Constants.WIDTH_RATIO;
-			rightWeb.width=rightWeb.x=240*Constants.WIDTH_RATIO;
-			
-			leftSpider.x = leftWeb.width - leftSpider.width;
-			rightSpider.x= rightWeb.x;
-			
-		}else  hasDelay=false;
+		hasDelay = false;
 		
+		switch (level) {
+		case 1 : if (MathUtils.random(1, 6) == 1) {
+			setDelay();
+		}break;
+		case 2 : if (MathUtils.random(1, 5) == 1) {
+			setDelay();
+		}break;
+		case 3 : if (MathUtils.random(1, 4) == 1) {
+			setDelay();
+		}break;
+		case 4 : if (MathUtils.random(1, 3) == 1) {
+			setDelay();
+		}break;
+		}
+		
+	}
+	
+	private void setDelay () {
+		hasDelay = true;
+		
+		leftWeb.width=240*Constants.WIDTH_RATIO;
+		rightWeb.width=rightWeb.x=240*Constants.WIDTH_RATIO;
+		
+		leftSpider.x = leftWeb.width - leftSpider.width;
+		rightSpider.x= rightWeb.x;
 	}
 	
 	public void movePlatform (float deltaTime) {
@@ -104,6 +122,14 @@ public class Spider {
 		return rightWeb;
 	}
 	
+	public float getanimTime () {
+		return animTime;
+	}
+	
+	public void setanimTime (float animTime) {
+		this.animTime = animTime;
+	}
+	
 	public boolean getDelay () {
 		return hasDelay;
 	}
@@ -133,12 +159,20 @@ public class Spider {
 		int d = MathUtils.random(1,6);
 		moveSpeed = 6f * Constants.WIDTH_RATIO;
 		if(d==1){
-			moveSpeed=2f;
+			moveSpeed=2f * Constants.WIDTH_RATIO;
 		}else if(d<4) moveSpeed = 4f * Constants.WIDTH_RATIO;
 	}
 	
 	private void level4 () {
+		int d = MathUtils.random(1, 4);
 		
+		moveSpeed = 6 * Constants.WIDTH_RATIO;
+		
+		if(d == 1){
+			moveSpeed = 2f * Constants.WIDTH_RATIO;
+		}else if(d == 2){
+			moveSpeed = 4f * Constants.WIDTH_RATIO;
+		}
 	}
 	
 	
@@ -169,5 +203,12 @@ public class Spider {
 		return leftWeb.width == 0;
 	}
 	
+	public Rectangle getRightSpider(){
+		return rightSpider;
+	}
+	
+	public void setisExpanding(int i) {
+		this.isExpanding = i;
+	}
 	
 }
